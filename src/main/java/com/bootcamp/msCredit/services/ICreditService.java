@@ -28,4 +28,12 @@ public interface ICreditService extends ICRUDService<Credit, String> {
      * @return the flux
      */
      Flux<Credit> findAllByCustomerIdentityNumber(String customerIdentityNumber);
+
+    /**
+     * Validate customer identity number mono.
+     *
+     * @param customerIdentityNumber the customer identity number
+     * @return the mono
+     */
+     Mono<Credit> validateCustomerIdentityNumber(String customerIdentityNumber);
 }

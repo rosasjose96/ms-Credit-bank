@@ -122,4 +122,11 @@ public class CreditServiceImpl implements ICreditService {
     public Flux<Credit> findAllByCustomerIdentityNumber(final String customerIdentityNumber) {
         return repository.findAllByCustomerIdentityNumber(customerIdentityNumber);
     }
+
+    @Override
+    public Mono<Credit> validateCustomerIdentityNumber(final String customerIdentityNumber) {
+        return repository.findByCustomerIdentityNumber(customerIdentityNumber)
+                .switchIfEmpty(Mono.just(Credit.builder()
+                        .customerIdentityNumber(null).build()));
+    }
 }

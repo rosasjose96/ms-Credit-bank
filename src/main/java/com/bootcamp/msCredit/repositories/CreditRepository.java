@@ -17,5 +17,19 @@ public interface CreditRepository extends ReactiveMongoRepository<Credit,String>
      */
     Flux<Credit> findAllByCustomerIdentityNumber(String customerIdentityNumber);
 
+    /**
+     * Find credit by contractNumber Mono.
+     *
+     * @param contractNumber the contract number
+     * @return the Mono
+     */
     Mono<Credit> findByContractNumber(String contractNumber);
+
+    /**
+     * Find by customer identity number mono.
+     *
+     * @param customerIdentityNumber the customer identity number
+     * @return the mono
+     */
+    Mono<Credit> findByCustomerIdentityNumber(String customerIdentityNumber);
 }

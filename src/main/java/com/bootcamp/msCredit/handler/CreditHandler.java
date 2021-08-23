@@ -66,13 +66,31 @@ public class CreditHandler {
     public Mono<ServerResponse> newCredit(final ServerRequest request) {
         Mono<Credit> creditMono = request.bodyToMono(Credit.class);
 
-        return creditMono.flatMap(credito -> service.getCustomer(credito.getCustomerIdentityNumber())
-       .flatMap(customer -> {
-           credito.setAmount(credito.getCapital() + (credito.getCapital() * credito.getInterestRate()) + credito.getCommission());
+        return creditMono.flatMap(credito ->
+                        service.getCustomer(credito.getCustomerIdentityNumber())
+           .flatMap(customer -> {
+           credito.setAmount(credito.getCapital()
+                   + (credito.getCapital() * credito.getInterestRate())
+                   + credito.getCommission());
            credito.setCustomer(CustomerDTO.builder().name(customer.getName())
-                   .code(customer.getCustomerType().getCode()).customerIdentityNumber(customer.getCustomerIdentityNumber()).build());
+                   .code(customer.getCustomerType().getCode())
+                   .customerIdentityNumber(customer.getCustomerIdentityNumber())
+                   .build());
             credito.setAmountInitial(credito.getAmount());
-            return service.create(credito);
+            return service.validateCustomerIdentityNumber(customer
+                            .getCustomerIdentityNumber())
+                   .flatMap(accountFound -> {
+                       if (accountFound.getCustomerIdentityNumber() != null
+                               && (customer.getCustomerType().getCode().equals("1001")
+                               || customer.getCustomerType().getCode().equals("1002"))) {
+                           LOGGER.info("La cuenta encontrada es: "
+                                   + accountFound.getCustomerIdentityNumber());
+                           return Mono.empty();
+                       } else {
+                           LOGGER.info("No se encontró la cuenta ");
+                           return service.create(credito);
+                       }
+                   });
                 }))
                 .flatMap(c -> ServerResponse
                 .ok()
