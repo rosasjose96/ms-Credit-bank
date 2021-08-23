@@ -11,6 +11,8 @@ import reactor.core.publisher.Mono;
  */
 public interface ICreditService extends ICRUDService<Credit, String> {
 
+    Mono<Credit> findByContractNumber(String contractNumber);
+
     /**
      * Gets customer.
      *

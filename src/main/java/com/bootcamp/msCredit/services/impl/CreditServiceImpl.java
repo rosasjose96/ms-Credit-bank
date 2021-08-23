@@ -89,6 +89,11 @@ public class CreditServiceImpl implements ICreditService {
         return repository.delete(credit);
     }
 
+    @Override
+    public Mono<Credit> findByContractNumber(final String contractNumber) {
+        return repository.findByContractNumber(contractNumber);
+    }
+
     /**
      *
      * @param customerIdentityNumber the customer identity number

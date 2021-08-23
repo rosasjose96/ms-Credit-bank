@@ -23,6 +23,9 @@ public class CreditHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditHandler.class);
 
+    /**
+     * Insert depencies from ICreditService.
+     */
     @Autowired
     private ICreditService service;
 
@@ -44,9 +47,9 @@ public class CreditHandler {
      * @return the mono
      */
     public Mono<ServerResponse> findCredit(final ServerRequest request) {
-        String id = request.pathVariable("id");
+        String contractNumber = request.pathVariable("contractNumber");
 
-        return service.findById(id).flatMap(c -> ServerResponse
+        return service.findByContractNumber(contractNumber).flatMap(c -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(c)))
@@ -116,9 +119,9 @@ public class CreditHandler {
      */
     public Mono<ServerResponse> updateCredit(final ServerRequest request) {
         Mono<Credit> creditMono = request.bodyToMono(Credit.class);
-        String id = request.pathVariable("id");
+        String contractNumber = request.pathVariable("contractNumber");
 
-        return service.findById(id).zipWith(creditMono, (db,req) -> {
+        return service.findByContractNumber(contractNumber).zipWith(creditMono, (db, req) -> {
                     db.setAmount(req.getAmount());
                     return db;
                 }).flatMap(c -> ServerResponse
